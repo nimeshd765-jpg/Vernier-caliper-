@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A/L Physics Practical - Vernier Caliper Virtual Lab</title>
+    
+    <!-- PWA Web App Manifest (Inline Blob මගින් සකසා ඇත) -->
+    <link id="manifest-placeholder" rel="manifest">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .lab-card {
+            width: 100%;
+            max-width: 980px;
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        h2 {
+            color: #38bdf8;
+            text-align: center;
+            margin: 0 0 5px 0;
+            font-size: 1.25rem;
+        }
+        .sub-title {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.82rem;
+            margin-bottom: 12px;
+        }
+        
+        .step-box {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            margin-bottom: 10px;
+        }
+        .step-title {
+            font-size: 0.82rem;
+            font-weight: bold;
+            color: #38bdf8;
+            margin-bottom: 6px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .select-btn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.78rem;
+            transition: all 0.2s;
+        }
+        .select-btn.active {
+            background: #0284c7;
+            border-color: #38bdf8;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+        }
+        .jaw-btn.active {
+            background: #e11d48;
+            border-color: #fb7185;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(251, 113, 133, 0.4);
+        }
+
+        .canvas-container {
+            background: #070d19;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            padding: 8px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .zoom-box {
+            background: #030712;
+            border: 2px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: inset 0 0 15px rgba(14, 165, 233, 0.15);
+        }
+        .zoom-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            color: #38bdf8;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        
+        .status-bar {
+            margin-top: 6px;
+            font-weight: bold;
+            font-size: 0.82rem;
+            height: 22px;
+        }
+        .status-clamped { color: #4ade80; }
+        .status-loose { color: #fbbf24; }
+        .status-warn { color: #f43f5e; }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+        .slider-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 0.8rem;
+        }
+        input[type=range] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #475569;
+            outline: none;
+            cursor: pointer;
+        }
+        .action-btn {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .extra-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        select {
+            background: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #475569;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .reading-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+        }
+        .card {
+            background: #0f172a;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+        .card label {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .card .val {
+            color: #38bdf8;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="lab-card">
+    <h2>ප්‍රායෝගික පරීක්ෂණ 01: වර්නියර් කැලිපරය</h2>
+    <div class="sub-title">භෞතික විද්‍යාගාර අත්හදා බැලීම් සිමියුලේටරය</div>
+
+    <!-- Step 1: Select Object -->
+    <div class="step-box">
+        <div class="step-title">1 පියවර: මනින වස්තුව තෝරන්න (Select Object)</div>
+        <div class="btn-group">
+            <button class="select-btn" onclick="setObject(event, 'can')">🥫 ලෝහ ටින් එක</button>
+            <button class="select-btn" onclick="setObject(event, 'pvc')">🔵 PVC බටය</button>
+            <button class="select-btn" onclick="setObject(event, 'beaker')">🧪 කුඩා බීකරය</button>
+            <button class="select-btn" onclick="setObject(event, 'sphere')">🔴 ලෝහ ගෝලය</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Select Measurement Method / Jaw -->
+    <div class="step-box">
+        <div class="step-title">2 පියවර: මනින ක්‍රමය / හනුව තෝරන්න (Select Jaw / Tool)</div>
+        <div class="btn-group">
+            <button class="select-btn jaw-btn active" onclick="setMethod(event, 'ext')">⬇️ බාහිර හනු</button>
+            <button class="select-btn jaw-btn" onclick="setMethod(event, 'int')">⬆️ අභ්‍යන්තර හනු</button>
+            <button class="select-btn jaw-btn" onclick="setMethod(event, 'depth')">➡️ ගැඹුරු කූර</button>
+        </div>
+    </div>
+
+    <!-- Main Caliper Canvas -->
+    <div class="canvas-container">
+        <canvas id="caliperCanvas" width="960" height="290"></canvas>
+        <div id="statusText" class="status-bar status-loose">👉 පළමුව මනින වස්තුවක් තෝරන්න</div>
+    </div>
+
+    <!-- Target Focused Zoom View -->
+    <div class="zoom-box" id="zoomContainer">
+        <div class="zoom-header">
+            <span>🔍 වර්නියර් කොටසේ පමණක් සූම් දසුන (Vernier Window Zoom View)</span>
+            <span style="font-size:0.75rem; color:#4ade80;">🔴 රතු ඉරෙන් සමපාත ලක්ෂ්‍යය (VSR) පෙන්වයි</span>
+        </div>
+        <canvas id="zoomCanvas" width="880" height="160"></canvas>
+    </div>
+
+    <!-- Sliders & Controls -->
+    <div class="controls-grid">
+        <div class="slider-box">
+            <label for="jawSlider"><b>කැලිපරය විවෘත කිරීම / තද කිරීම (0 - 110 mm):</b></label>
+            <input type="range" id="jawSlider" min="0" max="110" value="0" step="0.1">
+        </div>
+        <button class="action-btn" onclick="autoFitJaws()">🎯 ස්වයංක්‍රීයව තද කරන්න</button>
+    </div>
+
+    <!-- Options -->
+    <div class="extra-panel">
+        <div>
+            <label for="zeroErrorSelect"><b>ශූන්‍ය දෝෂය (Zero Error): </b></label>
+            <select id="zeroErrorSelect" onchange="render()">
+                <option value="0.0">දෝෂයක් නැත (0.0 mm)</option>
+                <option value="0.2">ධන ශූන්‍ය දෝෂය (+0.2 mm) - [මලකඩ/අපද්‍රව්‍ය]</option>
+                <option value="-0.2">ඍණ ශූන්‍ය දෝෂය (-0.2 mm) - [හනු ගෙවී යාම]</option>
+            </select>
+        </div>
+        <div>
+            <label><input type="checkbox" id="zoomToggle" checked onchange="render()"> විශාලකය පෙන්වන්න</label>
+        </div>
+    </div>
+
+    <!-- Reading Board -->
+    <div class="reading-board">
+        <div class="card">
+            <label>මවු පරිමාණ පාඨාංකය (MSR)</label>
+            <span id="msrVal" class="val">0.0 mm</span>
+        </div>
+        <div class="card">
+            <label>වර්නියර් සමපාත අංකය (VSR)</label>
+            <span id="vsrVal" class="val">0</span>
+        </div>
+        <div class="card">
+            <label>දක්වන පාඨාංකය (Measured)</label>
+            <span id="measuredVal" class="val">0.00 mm</span>
+        </div>
+        <div class="card">
+            <label>සංශෝධිත නිවැරදි මිනුම</label>
+            <span id="correctedVal" class="val" style="color:#4ade80;">0.00 mm</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. PREVENT INSTALL PROMPT (Install Banner එක ඒම නැවැත්වීම) ---
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); // ස්වයංක්‍රීයව Install Prompt එක පෙන්වීම වළක්වයි
+    });
+
+    // --- 2. PWA MANIFEST DYNAMIC INJECTION ---
+    const manifestData = {
+        name: "Vernier Caliper Virtual Lab",
+        short_name: "VernierLab",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#0f172a",
+        theme_color: "#0f172a",
+        icons: [{
+            src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f172a'/><text y='65' x='15' font-size='60' fill='%2338bdf8'>📏</text></svg>",
+            sizes: "192x192 512x512",
+            type: "image/svg+xml"
+        }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+    document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
+
+    // --- 3. SERVICE WORKER REGISTRATION (OFFLINE CACHING) ---
+    if ('serviceWorker' in navigator) {
+        const swCode = `
+            const CACHE_NAME = 'vernier-lab-v1';
+            self.addEventListener('install', (e) => {
+                e.waitUntil(
+                    caches.open(CACHE_NAME).then((cache) => cache.addAll(['./']))
+                );
+                self.skipWaiting();
+            });
+            self.addEventListener('activate', (e) => {
+                e.waitUntil(clients.claim());
+            });
+            self.addEventListener('fetch', (e) => {
+                e.respondWith(
+                    caches.match(e.request).then((res) => res || fetch(e.request))
+                );
+            });
+        `;
+        const swBlob = new Blob([swCode], {type: 'text/javascript'});
+        const swUrl = URL.createObjectURL(swBlob);
+
+        navigator.serviceWorker.register(swUrl).catch(err => console.log('SW reg error:', err));
+    }
+
+    // --- SIMULATOR MAIN SCRIPT ---
+    const canvas = document.getElementById('caliperCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const zoomCanvas = document.getElementById('zoomCanvas');
+    const zoomCtx = zoomCanvas.getContext('2d');
+
+    const slider = document.getElementById('jawSlider');
+    const statusText = document.getElementById('statusText');
+
+    const labObjects = {
+        can: { name: "ලෝහ ටින් එක", ext: 48.5, int: 45.2, depth: 52.0 },
+        pvc: { name: "PVC බටය", ext: 48.0, int: 41.6, depth: 40.0 },
+        beaker: { name: "කුඩා බීකරය", ext: 34.0, int: 30.2, depth: 42.5 },
+        sphere: { name: "ලෝහ ගෝලය", ext: 24.6, int: null, depth: null }
+    };
+
+    let currentObject = null;
+    let currentMethod = 'ext';
+
+    const originX = 140;
+    const scaleY = 70;
+    const pxPerMm = 4.8;
+
+    function setObject(evt, objKey) {
+        currentObject = objKey;
+        const btns = document.querySelectorAll('.step-box:nth-child(1) .select-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        if (evt) evt.target.classList.add('active');
+        
+        slider.value = 0;
+        render();
+    }
+
+    function setMethod(evt, methodKey) {
+        currentMethod = methodKey;
+        const btns = document.querySelectorAll('.jaw-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        if (evt) evt.target.classList.add('active');
+        
+        slider.value = 0;
+        render();
+    }
+
+    function autoFitJaws() {
+        if (!currentObject) {
+            alert("කරුණාකර පළමුව මනින වස්තුවක් තෝරන්න!");
+            return;
+        }
+        let targetSize = labObjects[currentObject][currentMethod];
+        if (targetSize !== null && targetSize !== undefined) {
+            slider.value = targetSize;
+            render();
+        }
+    }
+
+    function drawWhitePlasticGrad(context, x, y, w, h) {
+        let grad = context.createLinearGradient(x, y, x, y + h);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.3, '#f1f5f9');
+        grad.addColorStop(0.8, '#e2e8f0');
+        grad.addColorStop(1, '#cbd5e1');
+        return grad;
+    }
+
+    function render() {
+        let val = parseFloat(slider.value);
+        let objData = currentObject ? labObjects[currentObject] : null;
+        let targetSize = objData ? objData[currentMethod] : null;
+        let zeroErr = parseFloat(document.getElementById('zeroErrorSelect').value);
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let physicalGap = val + (zeroErr > 0 ? zeroErr : 0);
+        let slideX = originX + (physicalGap * pxPerMm);
+
+        if (!currentObject) {
+            statusText.className = "status-bar status-loose";
+            statusText.innerHTML = "👉 පළමුව මනින වස්තුවක් තෝරන්න";
+        } else if (targetSize === null) {
+            statusText.className = "status-bar status-warn";
+            statusText.innerHTML = "❌ " + objData.name + " සඳහා මෙම මැනුම් ක්‍රමය භාවිතා කළ නොහැක!";
+        } else {
+            let diff = Math.abs(val - targetSize);
+            if (diff <= 0.2) {
+                statusText.className = "status-bar status-clamped";
+                statusText.innerHTML = "✅ " + objData.name + " හි මිනුම නිවැරදිව ලබාගෙන ඇත!";
+            } else {
+                statusText.className = "status-bar status-loose";
+                statusText.innerHTML = "⚠️ හනු නිවැරදි ස්ථානයට සකස් කරන්න";
+            }
+        }
+
+        const beamStartX = 20;
+        const beamEndX = 700;
+        const beamHeight = 46;
+
+        let depthExtension = physicalGap * pxPerMm;
+        let rodY = scaleY + 20;
+        let rodH = 5;
+
+        if (currentMethod === 'depth' && targetSize !== null && currentObject) {
+            drawDepthContainerBg(currentObject, beamEndX, targetSize);
+        }
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(slideX, rodY, (beamEndX - slideX) + depthExtension, rodH);
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(slideX, rodY, (beamEndX - slideX) + depthExtension, rodH);
+
+        if (currentMethod === 'depth' && targetSize !== null && currentObject) {
+            drawDepthContainerFg(currentObject, beamEndX, targetSize);
+        }
+
+        ctx.fillStyle = drawWhitePlasticGrad(ctx, beamStartX, scaleY, beamEndX - beamStartX, beamHeight);
+        ctx.fillRect(beamStartX, scaleY, beamEndX - beamStartX, beamHeight);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(beamStartX, scaleY, beamEndX - beamStartX, beamHeight);
+
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(beamStartX, rodY + 2);
+        ctx.lineTo(beamEndX, rodY + 2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(originX, scaleY);
+        ctx.lineTo(originX, scaleY - 45);
+        ctx.lineTo(originX + 10, scaleY - 45);
+        ctx.lineTo(originX + 35, scaleY);
+        ctx.closePath();
+        ctx.fillStyle = drawWhitePlasticGrad(ctx, originX, scaleY - 45, 35, 45);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8'; ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(originX, scaleY + beamHeight);
+        ctx.lineTo(originX, scaleY + beamHeight + 110);
+        ctx.lineTo(originX - 20, scaleY + beamHeight + 110);
+        ctx.lineTo(originX - 45, scaleY + beamHeight + 70);
+        ctx.lineTo(originX - 55, scaleY + beamHeight);
+        ctx.closePath();
+        ctx.fillStyle = drawWhitePlasticGrad(ctx, originX - 55, scaleY + beamHeight, 55, 110);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8'; ctx.stroke();
+
+        if (zeroErr > 0) {
+            ctx.fillStyle = '#d97706';
+            ctx.fillRect(originX, scaleY + beamHeight, 6, 110);
+            ctx.fillStyle = '#b45309';
+            ctx.fillRect(originX + 2, scaleY + beamHeight + 15, 3, 80);
+            ctx.fillStyle = '#78350f';
+            for (let i = 0; i < 8; i++) {
+                ctx.fillRect(originX + 1, scaleY + beamHeight + 10 + (i * 12), 4, 3);
+            }
+        } else if (zeroErr < 0) {
+            ctx.fillStyle = '#070d19';
+            ctx.beginPath();
+            ctx.moveTo(originX, scaleY + beamHeight + 20);
+            ctx.lineTo(originX - 5, scaleY + beamHeight + 55);
+            ctx.lineTo(originX, scaleY + beamHeight + 90);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        if (currentObject && targetSize !== null && currentMethod !== 'depth') {
+            drawObjectOnCanvas(currentObject, currentMethod, targetSize);
+        }
+
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1;
+        ctx.font = 'bold 8px sans-serif';
+        ctx.textAlign = 'center';
+
+        for (let inch = 0; inch <= 5; inch++) {
+            let inchPx = originX + (inch * 25.4 * pxPerMm);
+            if (inchPx > beamEndX - 20) break;
+
+            for (let sub = 0; sub < 16; sub++) {
+                let x = inchPx + (sub * (25.4 / 16) * pxPerMm);
+                if (x > beamEndX - 10) break;
+                let h = (sub === 0) ? 14 : ((sub % 8 === 0) ? 10 : ((sub % 4 === 0) ? 7 : 4));
+                ctx.beginPath();
+                ctx.moveTo(x, scaleY);
+                ctx.lineTo(x, scaleY + h);
+                ctx.stroke();
+            }
+            ctx.fillText(inch, inchPx, scaleY + 22);
+        }
+
+        ctx.font = 'bold 9px sans-serif';
+        for (let mm = 0; mm <= 110; mm++) {
+            let x = originX + (mm * pxPerMm);
+            if (x > beamEndX - 10) break;
+
+            let h = (mm % 10 === 0) ? 16 : ((mm % 5 === 0) ? 10 : 6);
+            ctx.beginPath();
+            ctx.moveTo(x, scaleY + beamHeight);
+            ctx.lineTo(x, scaleY + beamHeight - h);
+            ctx.stroke();
+
+            if (mm % 10 === 0) {
+                ctx.fillText(mm, x, scaleY + beamHeight - 20);
+            }
+        }
+        ctx.fillText("mm", beamEndX - 25, scaleY + beamHeight - 8);
+        ctx.fillText("in.", beamEndX - 25, scaleY + 14);
+
+        let sliderW = 110;
+        ctx.fillStyle = drawWhitePlasticGrad(ctx, slideX - 15, scaleY - 6, sliderW, beamHeight + 12);
+        ctx.fillRect(slideX - 15, scaleY - 6, sliderW, beamHeight + 12);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.strokeRect(slideX - 15, scaleY - 6, sliderW, beamHeight + 12);
+
+        ctx.beginPath();
+        ctx.moveTo(slideX, scaleY);
+        ctx.lineTo(slideX, scaleY - 45);
+        ctx.lineTo(slideX - 10, scaleY - 45);
+        ctx.lineTo(slideX - 35, scaleY);
+        ctx.closePath();
+        ctx.fillStyle = drawWhitePlasticGrad(ctx, slideX - 35, scaleY - 45, 35, 45);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8'; ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(slideX, scaleY + beamHeight);
+        ctx.lineTo(slideX, scaleY + beamHeight + 110);
+        ctx.lineTo(slideX + 20, scaleY + beamHeight + 110);
+        ctx.lineTo(slideX + 35, scaleY + beamHeight + 70);
+        ctx.lineTo(slideX + 50, scaleY + beamHeight);
+        ctx.closePath();
+        ctx.fillStyle = drawWhitePlasticGrad(ctx, slideX, scaleY + beamHeight, 50, 110);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8'; ctx.stroke();
+
+        if (zeroErr > 0) {
+            ctx.fillStyle = '#d97706';
+            ctx.fillRect(slideX - 6, scaleY + beamHeight, 6, 110);
+            ctx.fillStyle = '#b45309';
+            ctx.fillRect(slideX - 5, scaleY + beamHeight + 15, 3, 80);
+        } else if (zeroErr < 0) {
+            ctx.fillStyle = '#070d19';
+            ctx.beginPath();
+            ctx.moveTo(slideX, scaleY + beamHeight + 20);
+            ctx.lineTo(slideX + 5, scaleY + beamHeight + 55);
+            ctx.lineTo(slideX, scaleY + beamHeight + 90);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 8; i++) {
+            let vx = slideX + (i * 1.8 * pxPerMm);
+            ctx.beginPath();
+            ctx.moveTo(vx, scaleY - 2);
+            ctx.lineTo(vx, scaleY + 8);
+            ctx.stroke();
+        }
+
+        ctx.strokeStyle = '#000000';
+        ctx.font = 'bold 8px sans-serif';
+        for (let v = 0; v <= 10; v++) {
+            let vx = slideX + (v * 0.95 * pxPerMm);
+            let h = (v % 5 === 0) ? 12 : 8;
+            ctx.beginPath();
+            ctx.moveTo(vx, scaleY + beamHeight + 2);
+            ctx.lineTo(vx, scaleY + beamHeight - h + 2);
+            ctx.stroke();
+
+            if (v % 1 === 0) {
+                ctx.fillText(v, vx, scaleY + beamHeight + 12);
+            }
+        }
+        ctx.font = 'bold 7px sans-serif';
+        ctx.fillText("0.05mm", slideX + 68, scaleY + beamHeight + 10);
+
+        let displayedVal = val + zeroErr;
+        let msr = Math.floor(displayedVal);
+        let vsr = Math.round((displayedVal - msr) * 10);
+        if (vsr === 10) { vsr = 0; msr += 1; }
+        
+        let measured = (msr + (vsr * 0.1)).toFixed(2);
+        let corrected = (parseFloat(measured) - zeroErr).toFixed(2);
+
+        document.getElementById('msrVal').textContent = msr.toFixed(1) + ' mm';
+        document.getElementById('vsrVal').textContent = vsr;
+        document.getElementById('measuredVal').textContent = measured + ' mm';
+        document.getElementById('correctedVal').textContent = corrected + ' mm';
+
+        let isZoomEnabled = document.getElementById('zoomToggle').checked;
+        let zoomContainer = document.getElementById('zoomContainer');
+        zoomContainer.style.display = isZoomEnabled ? 'block' : 'none';
+
+        if (isZoomEnabled) {
+            zoomCtx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+            zoomCtx.fillStyle = '#1e293b';
+            zoomCtx.fillRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+
+            let zoomPxPerMm = 45;
+            let windowStartX = 200;
+            let vernierZeroPos = displayedVal;
+
+            zoomCtx.fillStyle = '#f8fafc';
+            zoomCtx.fillRect(0, 10, zoomCanvas.width, 60);
+            zoomCtx.strokeStyle = '#94a3b8';
+            zoomCtx.strokeRect(0, 10, zoomCanvas.width, 60);
+
+            zoomCtx.fillStyle = '#0f172a';
+            zoomCtx.strokeStyle = '#0f172a';
+            zoomCtx.lineWidth = 2.5;
+            zoomCtx.font = 'bold 14px sans-serif';
+            zoomCtx.textAlign = 'center';
+
+            let startMm = Math.max(0, Math.floor(vernierZeroPos - 4));
+            let endMm = Math.min(150, Math.ceil(vernierZeroPos + 15));
+
+            for (let mm = startMm; mm <= endMm; mm++) {
+                let x = windowStartX + (mm - vernierZeroPos) * zoomPxPerMm;
+
+                if (x >= 10 && x <= zoomCanvas.width - 10) {
+                    let h = (mm % 10 === 0) ? 35 : ((mm % 5 === 0) ? 22 : 12);
+                    zoomCtx.beginPath();
+                    zoomCtx.moveTo(x, 10);
+                    zoomCtx.lineTo(x, 10 + h);
+                    zoomCtx.stroke();
+
+                    if (mm % 10 === 0) {
+                        zoomCtx.fillText((mm / 10) + ' cm', x, 62);
+                    } else if (mm % 5 === 0) {
+                        zoomCtx.fillStyle = '#475569';
+                        zoomCtx.font = 'bold 11px sans-serif';
+                        zoomCtx.fillText(mm + ' mm', x, 62);
+                        zoomCtx.fillStyle = '#0f172a';
+                        zoomCtx.font = 'bold 14px sans-serif';
+                    }
+                }
+            }
+
+            zoomCtx.fillStyle = '#ffffff';
+            zoomCtx.fillRect(windowStartX - 15, 75, (10 * 0.95 * zoomPxPerMm) + 30, 70);
+            zoomCtx.strokeStyle = '#38bdf8';
+            zoomCtx.lineWidth = 3;
+            zoomCtx.strokeRect(windowStartX - 15, 75, (10 * 0.95 * zoomPxPerMm) + 30, 70);
+
+            zoomCtx.font = 'bold 14px sans-serif';
+
+            for (let v = 0; v <= 10; v++) {
+                let vx = windowStartX + (v * 0.95 * zoomPxPerMm);
+                let h = (v % 5 === 0) ? 32 : 20;
+
+                if (v === vsr) {
+                    zoomCtx.strokeStyle = '#ef4444';
+                    zoomCtx.lineWidth = 4;
+                } else {
+                    zoomCtx.strokeStyle = '#0284c7';
+                    zoomCtx.lineWidth = 2.5;
+                }
+
+                zoomCtx.beginPath();
+                zoomCtx.moveTo(vx, 75);
+                zoomCtx.lineTo(vx, 75 + h);
+                zoomCtx.stroke();
+
+                zoomCtx.fillStyle = (v === vsr) ? '#ef4444' : '#0369a1';
+                zoomCtx.fillText(v, vx, 128);
+            }
+
+            zoomCtx.fillStyle = '#ef4444';
+            zoomCtx.beginPath();
+            zoomCtx.moveTo(windowStartX, 73);
+            zoomCtx.lineTo(windowStartX - 6, 63);
+            zoomCtx.lineTo(windowStartX + 6, 63);
+            zoomCtx.closePath();
+            zoomCtx.fill();
+        }
+    }
+
+    function drawObjectOnCanvas(type, method, trueMm) {
+        let sizePx = trueMm * pxPerMm;
+
+        if (method === 'ext') {
+            let cx = originX + (sizePx / 2);
+            let cy = scaleY + beamHeight + 55;
+
+            if (type === 'sphere') {
+                let rad = sizePx / 2;
+                let grad = ctx.createRadialGradient(cx - rad*0.3, cy - rad*0.3, rad*0.1, cx, cy, rad);
+                grad.addColorStop(0, '#fca5a5'); 
+                grad.addColorStop(0.5, '#ef4444'); 
+                grad.addColorStop(1, '#7f1d1d');
+                
+                ctx.beginPath(); 
+                ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+                ctx.fillStyle = grad; 
+                ctx.fill(); 
+                ctx.strokeStyle = '#991b1b'; 
+                ctx.lineWidth = 2; 
+                ctx.stroke();
+            } 
+            else if (type === 'can') {
+                let h = 85;
+                let grad = ctx.createLinearGradient(originX, cy, originX + sizePx, cy);
+                grad.addColorStop(0, '#475569'); grad.addColorStop(0.3, '#cbd5e1'); grad.addColorStop(0.7, '#ffffff'); grad.addColorStop(1, '#334155');
+                ctx.fillStyle = grad;
+                ctx.fillRect(originX, cy - (h/2), sizePx, h);
+                ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(originX, cy - (h/2), sizePx, h);
+            }
+            else if (type === 'pvc') {
+                let h = 80;
+                let grad = ctx.createLinearGradient(originX, cy, originX + sizePx, cy);
+                grad.addColorStop(0, '#0284c7'); grad.addColorStop(0.4, '#38bdf8'); grad.addColorStop(0.8, '#0284c7'); grad.addColorStop(1, '#0369a1');
+                ctx.fillStyle = grad;
+                ctx.fillRect(originX, cy - (h/2), sizePx, h);
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2;
+                ctx.strokeRect(originX, cy - (h/2), sizePx, h);
+            }
+            else if (type === 'beaker') {
+                let h = 85;
+                ctx.fillStyle = 'rgba(224, 242, 254, 0.35)';
+                ctx.fillRect(originX, cy - (h/2), sizePx, h);
+                ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 2;
+                ctx.strokeRect(originX, cy - (h/2), sizePx, h);
+            }
+        } 
+        else if (method === 'int') {
+            let py = scaleY - 40;
+            let h = 38;
+            let wall = 12;
+
+            if (type === 'pvc') {
+                ctx.fillStyle = '#0284c7'; ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5;
+                ctx.fillRect(originX - wall, py, wall, h);
+                ctx.strokeRect(originX - wall, py, wall, h);
+                ctx.fillRect(originX + sizePx, py, wall, h);
+                ctx.strokeRect(originX + sizePx, py, wall, h);
+            } 
+            else if (type === 'beaker') {
+                ctx.fillStyle = 'rgba(125, 211, 252, 0.5)'; ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 1.5;
+                ctx.fillRect(originX - 6, py, 6, h);
+                ctx.strokeRect(originX - 6, py, 6, h);
+                ctx.fillRect(originX + sizePx, py, 6, h);
+                ctx.strokeRect(originX + sizePx, py, 6, h);
+            }
+            else {
+                ctx.fillStyle = '#64748b'; ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1.5;
+                ctx.fillRect(originX - wall, py, wall, h);
+                ctx.strokeRect(originX - wall, py, wall, h);
+                ctx.fillRect(originX + sizePx, py, wall, h);
+                ctx.strokeRect(originX + sizePx, py, wall, h);
+            }
+        }
+    }
+
+    function drawDepthContainerBg(type, startX, targetDepthMm) {
+        let depthPx = targetDepthMm * pxPerMm;
+        let topY = scaleY - 15;
+        let cavityH = 75;
+        let bottomX = startX + depthPx;
+        let wallThickness = 12;
+
+        ctx.fillStyle = '#091322';
+        ctx.fillRect(startX, topY, depthPx, cavityH);
+
+        if (type === 'can') {
+            let grad = ctx.createLinearGradient(bottomX, topY - wallThickness, bottomX + wallThickness, topY + cavityH + wallThickness);
+            grad.addColorStop(0, '#475569'); grad.addColorStop(0.5, '#94a3b8'); grad.addColorStop(1, '#334155');
+            ctx.fillStyle = grad;
+            ctx.fillRect(bottomX, topY - wallThickness, wallThickness, cavityH + (wallThickness * 2));
+            ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5;
+            ctx.strokeRect(bottomX, topY - wallThickness, wallThickness, cavityH + (wallThickness * 2));
+        } else if (type === 'pvc') {
+            ctx.fillStyle = '#0284c7';
+            ctx.fillRect(bottomX, topY - wallThickness, wallThickness, cavityH + (wallThickness * 2));
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5;
+            ctx.strokeRect(bottomX, topY - wallThickness, wallThickness, cavityH + (wallThickness * 2));
+        } else if (type === 'beaker') {
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
+            ctx.fillRect(bottomX, topY - 6, 8, cavityH + 12);
+            ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 2;
+            ctx.strokeRect(bottomX, topY - 6, 8, cavityH + 12);
+        }
+    }
+
+    function drawDepthContainerFg(type, startX, targetDepthMm) {
+        let depthPx = targetDepthMm * pxPerMm;
+        let topY = scaleY - 15;
+        let cavityH = 75;
+        let wallThickness = 12;
+
+        if (type === 'can') {
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(startX, topY - wallThickness, depthPx, wallThickness);
+            ctx.fillRect(startX, topY + cavityH, depthPx, wallThickness);
+
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+            ctx.strokeRect(startX, topY - wallThickness, depthPx, wallThickness);
+            ctx.strokeRect(startX, topY + cavityH, depthPx, wallThickness);
+        } else if (type === 'pvc') {
+            ctx.fillStyle = '#0369a1';
+            ctx.fillRect(startX, topY - wallThickness, depthPx, wallThickness);
+            ctx.fillRect(startX, topY + cavityH, depthPx, wallThickness);
+
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5;
+            ctx.strokeRect(startX, topY - wallThickness, depthPx, wallThickness);
+            ctx.strokeRect(startX, topY + cavityH, depthPx, wallThickness);
+        } else if (type === 'beaker') {
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.3)';
+            ctx.fillRect(startX, topY - 6, depthPx, 6);
+            ctx.fillRect(startX, topY + cavityH, depthPx, 6);
+
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
+            ctx.strokeRect(startX, topY - 6, depthPx, 6);
+            ctx.strokeRect(startX, topY + cavityH, depthPx, 6);
+        }
+
+        ctx.strokeStyle = '#ef4444';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(startX + depthPx, topY);
+        ctx.lineTo(startX + depthPx, topY + cavityH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    slider.addEventListener('input', render);
+    render();
+</script>
+
+</body>
+</html>
